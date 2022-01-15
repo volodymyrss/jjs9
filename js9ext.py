@@ -1,25 +1,35 @@
 from notebook.utils import url_path_join
-from notebook.base.handlers import IPythonHandler,FileFindHandler
+
+from jupyter_server.base.handlers import JupyterHandler, FileFindHandler
+
 import tornado.web
 import os
 import subprocess
 import logging
 
+import jupyter_server.serverapp
+
+print('\033[31mimporting JS9!\033[0m')
 
 
-
-class MainHandler(IPythonHandler):
+class MainHandler(JupyterHandler):
     @tornado.web.authenticated
     def get(self):
         self.finish(self.render_template("index_jjs9.html", jid=None, **self.application.settings))
 
-class NewHandler(IPythonHandler):
+class NewHandler(JupyterHandler):
     @tornado.web.authenticated
     def get(self, jid_id):
         self.finish(self.render_template("index_jjs9.html", jid=jid_id, **self.application.settings))
 
-def _load_jupyter_server_extension(nb_server_app):
-    return load_jupyter_server_extension(nb_server_app)
+
+def _load_jupyter_server_extension(serverapp: jupyter_server.serverapp.ServerApp):
+    """
+    This function is called when the extension is loaded.
+    """
+    logging.error('\033[31mloading JS9!\033[0m')
+    print('\033[31mloading JS9!\033[0m')
+    return load_jupyter_server_extension(serverapp)
 
 def load_jupyter_server_extension(nb_server_app):
     """
@@ -47,3 +57,14 @@ def load_jupyter_server_extension(nb_server_app):
     web_app.add_handlers(host_pattern, [(route_pattern_new, NewHandler)])
     web_app.add_handlers(host_pattern, [(route_pattern_files, FileFindHandler, {"path": os.path.dirname(__file__)})])
 
+
+def _jupyter_server_extension_points():
+    """
+    Returns a list of dictionaries with metadata describing
+    where to find the `_load_jupyter_server_extension` function.
+    """
+    return [
+        {
+            "js9ext": "js9ext"
+        }
+    ]
