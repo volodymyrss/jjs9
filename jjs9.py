@@ -49,23 +49,28 @@ class JS9Server(pyjs9.JS9, KeepRefs):
         self.msg = ''
         self.id = None
         #super(JS9Server, self).__init__(host=self.node_url, id=wid+'JS9')
+
+
     def connect(self, wid = None, external=False):
-            temp = self.wid
-            if wid is not None:
-                self.wid = wid
-            if external:
-                super(JS9Server, self).__init__(host=self.node_url, id=self.wid+'JS9')
-                self.connected = True
-                return
-            if self.wid in self.displays:
-                super(JS9Server, self).__init__(host=self.node_url, id=self.wid+'JS9')
-                self.connected = True
-            else:
-                print('{} display does not exist'.format(self.wid))
-                self.wid = temp
+        temp = self.wid
+        if wid is not None:
+            self.wid = wid
+        if external:
+            super(JS9Server, self).__init__(host=self.node_url, id=self.wid+'JS9')
+            self.connected = True
+            return
+        if self.wid in self.displays:
+            super(JS9Server, self).__init__(host=self.node_url, id=self.wid+'JS9')
+            self.connected = True
+        else:
+            print('{} display does not exist'.format(self.wid))
+            self.wid = temp
+
+
     def handler_displayed(self, widget):
         #self._connect()
         self.msg = 'connected'
+
     def new_display(self, attached=True, wid=None, height_px=600, width_px=580):
         if wid is not None:
             self.wid = str(wid)
